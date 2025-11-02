@@ -62,7 +62,7 @@ export function SearchAndFilters({
             onChange={(e) => onSearchChange(e.target.value)}
             InputProps={{
               startAdornment: (
-                <InputAdornment position="start" sx={{ background: "#eaeaea", padding:'2px' }}>
+                <InputAdornment position="start" sx={{ background: "#eaeaea", padding:'2px', borderRadius: '4px', }}>
                   <Search />
                 </InputAdornment>
               ),
@@ -85,6 +85,7 @@ export function SearchAndFilters({
               },
               "& .MuiInputBase-root": {
                 borderRadius: '8px !important',
+                paddingLeft: '6px',
               },
             }}
             variant="outlined"

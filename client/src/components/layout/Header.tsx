@@ -6,18 +6,18 @@ export function Header() {
   const [location] = useLocation();
 
   return (
-    <AppBar position="sticky" elevation={1}>
+    <AppBar position="sticky" elevation={0} color="inherit">
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ minHeight: { xs: 56, sm: 64 } }}>
           {/* Logo/Brand */}
           <Typography
             variant="h6"
             component={Link}
+            color="primary"
             href="/"
             sx={{
               mr: 4,
               fontWeight: 700,
-              color: 'inherit',
               textDecoration: 'none',
               cursor: 'pointer',
               '&:hover': {
@@ -34,14 +34,14 @@ export function Header() {
               component={Link}
               href="/"
               startIcon={<HomeIcon />}
+              color="primary"
               sx={{
-                color: 'white',
                 textTransform: 'none',
                 fontWeight: location === '/' ? 700 : 400,
                 borderBottom: location === '/' ? '2px solid white' : 'none',
                 borderRadius: 0,
                 '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  opacity: 0.8,
                 },
               }}
             >
@@ -52,14 +52,14 @@ export function Header() {
               component={Link}
               href="/about"
               startIcon={<InfoIcon />}
+              color="primary"
               sx={{
-                color: 'white',
                 textTransform: 'none',
                 fontWeight: location === '/about' ? 700 : 400,
                 borderBottom: location === '/about' ? '2px solid white' : 'none',
                 borderRadius: 0,
                 '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  opacity: 0.8,
                 },
               }}
             >

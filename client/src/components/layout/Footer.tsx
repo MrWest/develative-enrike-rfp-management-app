@@ -34,7 +34,7 @@ export function Footer() {
           {/* Links */}
           <Stack direction="row" spacing={2} alignItems="center">
             <MuiLink
-              href="https://github.com/MrWest/enrike-rfp-management-app"
+              href="https://github.com/MrWest/develative-enrike-rfp-management-app"
               target="_blank"
               rel="noopener noreferrer"
               sx={{

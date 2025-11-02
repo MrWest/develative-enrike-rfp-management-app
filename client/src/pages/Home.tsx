@@ -133,10 +133,10 @@ export default function Home() {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pt: 2, pb: 4 }}>
       <Container maxWidth="xl">
         {/* Page title */}
-        <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 4 }}>
+        <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 2 }}>
           Rooming List Management: Events
         </Typography>
 
