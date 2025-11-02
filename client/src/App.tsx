@@ -4,6 +4,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import { Layout } from "./components/layout/Layout";
+const baseTheme = createTheme();
 
 // Create Material-UI theme
 const theme = createTheme({
@@ -36,6 +37,10 @@ const theme = createTheme({
     fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
     h4: {
       fontWeight: 700,
+      fontSize: "2rem",
+      [baseTheme.breakpoints.down("md")]: {
+        fontSize: "1.3rem",
+      },
     },
     h6: {
       fontWeight: 600,
@@ -45,6 +50,13 @@ const theme = createTheme({
     borderRadius: 12,
   },
   components: {
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
@@ -57,7 +69,7 @@ const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
+          borderRadius: 8,
         },
       },
     },
@@ -65,7 +77,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           fontWeight: 600,
-          borderRadius: 6,
+          borderRadius: 4,
         },
       },
     },

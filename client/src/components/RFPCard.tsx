@@ -79,7 +79,7 @@ export function RFPCard({ data }: RFPCardProps) {
                 flexDirection: 'column',
                 alignItems: 'center',
                 bgcolor: 'primary.50',
-                borderRadius: 1.5,
+                borderRadius: '8px',
                 px: 2,
                 py: 1,
                 minWidth: 60,

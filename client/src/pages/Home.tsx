@@ -5,11 +5,24 @@ import {
   Box,
   Grid,
   CircularProgress,
+  Divider,
 } from '@mui/material';
 import { RoomingList } from '@/../../shared/types';
 import { RFPCard } from '@/components/RFPCard';
 import { SearchAndFilters } from '@/components/SearchAndFilters';
 import { fetchRoomingLists } from '@/lib/api';
+
+// Color palette for event dividers
+const EVENT_COLORS = [
+  '#2563eb', // Blue
+  '#a855f7', // Purple
+  '#06b6d4', // Cyan
+  '#f59e0b', // Amber
+  '#10b981', // Emerald
+  '#ef4444', // Red
+  '#8b5cf6', // Violet
+  '#ec4899', // Pink
+];
 
 export default function Home() {
   const [data, setData] = useState<RoomingList[]>([]);
@@ -65,6 +78,31 @@ export default function Home() {
     });
   }, [data, debouncedSearchQuery, selectedStatuses]);
 
+  // Group filtered data by eventId
+  const groupedByEvent = useMemo(() => {
+    const groups = new Map<string, { eventName: string; items: RoomingList[] }>();
+
+    filteredData.forEach((item) => {
+      const key = item.eventId;
+      if (!groups.has(key)) {
+        groups.set(key, {
+          eventName: item.eventName,
+          items: [],
+        });
+      }
+      groups.get(key)!.items.push(item);
+    });
+
+    // Convert to array and sort by event name
+    return Array.from(groups.entries())
+      .map(([eventId, group]) => ({
+        eventId,
+        eventName: group.eventName,
+        items: group.items,
+      }))
+      .sort((a, b) => a.eventName.localeCompare(b.eventName));
+  }, [filteredData]);
+
   // Toggle status filter
   const handleStatusToggle = (status: string) => {
     setSelectedStatuses((prev) =>
@@ -117,14 +155,51 @@ export default function Home() {
           Showing {filteredData.length} of {data.length} events
         </Typography>
 
-        {/* Card grid */}
-        <Grid container spacing={3}>
-          {filteredData.map((item) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={item.roomingListId}>
-              <RFPCard data={item} />
+        {/* Grouped by Event */}
+        {groupedByEvent.map((group, groupIndex) => (
+          <Box key={group.eventId} sx={{ mb: 6 }}>
+            {/* Event Divider with Name */}
+            <Box sx={{ position: 'relative', mb: 4 }}>
+              <Divider
+                sx={{
+                  borderColor: EVENT_COLORS[groupIndex % EVENT_COLORS.length],
+                  borderWidth: 2,
+                }}
+              />
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  bgcolor: 'background.default',
+                  px: 3,
+                  py: 1,
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 700,
+                    color: EVENT_COLORS[groupIndex % EVENT_COLORS.length],
+                    textAlign: 'center',
+                  }}
+                >
+                  {group.eventName}
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Card grid for this event */}
+            <Grid container justifyContent="stretch" spacing={3}>
+              {group.items.map((item) => (
+                <Grid item size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={item.roomingListId}>
+                  <RFPCard data={item} />
+                </Grid>
+              ))}
             </Grid>
-          ))}
-        </Grid>
+          </Box>
+        ))}
 
         {/* Empty state */}
         {filteredData.length === 0 && (
