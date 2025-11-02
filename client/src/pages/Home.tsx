@@ -24,6 +24,18 @@ const EVENT_COLORS = [
   '#ec4899', // Pink
 ];
 
+// Color gradients for event dividers (transparent → color → transparent)
+const EVENT_COLOR_GRADIENTS = [
+  'linear-gradient(to right, transparent, #2563eb, transparent)', // Blue
+  'linear-gradient(to right, transparent, #a855f7, transparent)', // Purple
+  'linear-gradient(to right, transparent, #06b6d4, transparent)', // Cyan
+  'linear-gradient(to right, transparent, #f59e0b, transparent)', // Amber
+  'linear-gradient(to right, transparent, #10b981, transparent)', // Emerald
+  'linear-gradient(to right, transparent, #ef4444, transparent)', // Red
+  'linear-gradient(to right, transparent, #8b5cf6, transparent)', // Violet
+  'linear-gradient(to right, transparent, #ec4899, transparent)', // Pink
+];
+
 export default function Home() {
   const [data, setData] = useState<RoomingList[]>([]);
   const [loading, setLoading] = useState(true);
@@ -162,8 +174,8 @@ export default function Home() {
             <Box sx={{ position: 'relative', mb: 4 }}>
               <Divider
                 sx={{
-                  borderColor: EVENT_COLORS[groupIndex % EVENT_COLORS.length],
-                  borderWidth: 2,
+                  background: EVENT_COLOR_GRADIENTS[groupIndex % EVENT_COLOR_GRADIENTS.length],
+                  height: 2,
                 }}
               />
               <Box

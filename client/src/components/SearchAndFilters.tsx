@@ -54,114 +54,125 @@ export function SearchAndFilters({
         justifyContent="space-between"
       > */}
       <Grid container justifyContent="space-between">
-        <Grid item xs>
-          <TextField
-            fullWidth
-            placeholder="Search"
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start" sx={{ background: "#eaeaea", padding:'2px', borderRadius: '4px', }}>
-                  <Search />
-                </InputAdornment>
-              ),
-              endAdornment: searchQuery && (
-                <InputAdornment position="end">
-                  <IconButton
-                    size="small"
-                    onClick={() => onSearchChange("")}
-                    edge="end"
-                  >
-                    <Close fontSize="small" />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            sx={{
-              maxWidth: { sm: 400 },
-              "& .MuiInputBase-input": {
-                padding: "8px 12px 8px 0px",
-              },
-              "& .MuiInputBase-root": {
-                borderRadius: '8px !important',
-                paddingLeft: '6px',
-              },
-            }}
-            variant="outlined"
-          />
-        </Grid>
         <Grid item>
-          <Stack direction="row" spacing={1} alignItems="center">
-            {hasActiveFilters && (
-              <Button
-                variant="text"
-                size="small"
-                onClick={onClearFilters}
-                sx={{ textTransform: "none" }}
-              >
-                Clear filters
-              </Button>
-            )}
+          <Stack direction="row" spacing={2}>
+            <TextField
+              fullWidth
+              placeholder="Search"
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment
+                    position="start"
+                    sx={{
+                      background: "#eaeaea",
+                      padding: "2px",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    <Search />
+                  </InputAdornment>
+                ),
+                endAdornment: searchQuery && (
+                  <InputAdornment position="end">
+                    <IconButton
+                      size="small"
+                      onClick={() => onSearchChange("")}
+                      edge="end"
+                    >
+                      <Close fontSize="small" />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                maxWidth: { sm: 400 },
+                "& .MuiInputBase-input": {
+                  padding: "8px 12px 8px 0px",
+                },
+                "& .MuiInputBase-root": {
+                  borderRadius: "8px !important",
+                  paddingLeft: "6px",
+                },
+              }}
+              variant="outlined"
+            />
+            <Stack direction="row" spacing={1} alignItems="center">
+              {hasActiveFilters && (
+                <Button
+                  variant="text"
+                  size="small"
+                  onClick={onClearFilters}
+                  sx={{ textTransform: "none" }}
+                >
+                  Clear filters
+                </Button>
+              )}
 
-            <Badge
-              badgeContent={selectedStatuses.length}
-              color="primary"
-              invisible={selectedStatuses.length === 0}
-            >
-              <Button
-                variant="outlined"
-                startIcon={<FilterList />}
-                onClick={handleFilterClick}
-                sx={{
-                  textTransform: "none",
-                  fontWeight: 600,
+              <Badge
+                badgeContent={selectedStatuses.length}
+                color="primary"
+                invisible={selectedStatuses.length === 0}
+              >
+                <Button
+                  variant="outlined"
+                  startIcon={<FilterList />}
+                  onClick={handleFilterClick}
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: 600,
+                    py: 0.75,
+                  }}
+                >
+                  Filters
+                </Button>
+              </Badge>
+
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleFilterClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                PaperProps={{
+                  sx: { minWidth: 220, mt: 1 },
                 }}
               >
-                Filters
-              </Button>
-            </Badge>
-
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleFilterClose}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              PaperProps={{
-                sx: { minWidth: 220, mt: 1 },
-              }}
-            >
-              <Box sx={{ px: 2, py: 1 }}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
-                  Filter by Status
-                </Typography>
-              </Box>
-              {availableStatuses.map((status) => (
-                <MenuItem
-                  key={status}
-                  onClick={() => onStatusToggle(status)}
-                  dense
-                >
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={selectedStatuses.includes(status)}
-                        size="small"
-                      />
-                    }
-                    label={status}
-                    sx={{ width: "100%", m: 0 }}
-                  />
-                </MenuItem>
-              ))}
-            </Menu>
+                <Box sx={{ px: 2, py: 1 }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ fontWeight: 600, mb: 1 }}
+                  >
+                    Filter by Status
+                  </Typography>
+                </Box>
+                {availableStatuses.map((status) => (
+                  <MenuItem
+                    key={status}
+                    onClick={() => onStatusToggle(status)}
+                    dense
+                  >
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={selectedStatuses.includes(status)}
+                          size="small"
+                        />
+                      }
+                      label={status}
+                      sx={{ width: "100%", m: 0 }}
+                    />
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Stack>
           </Stack>
         </Grid>
       </Grid>
