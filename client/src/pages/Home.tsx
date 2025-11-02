@@ -6,7 +6,18 @@ import {
   Grid,
   CircularProgress,
   Divider,
+  IconButton,
+  ButtonGroup,
+  Button,
+  Collapse,
 } from '@mui/material';
+import {
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon,
+  UnfoldMore as UnfoldMoreIcon,
+  UnfoldLess as UnfoldLessIcon,
+  ViewAgenda as ViewAgendaIcon,
+} from '@mui/icons-material';
 import { RoomingList } from '@/../../shared/types';
 import { RFPCard } from '@/components/RFPCard';
 import { SearchAndFilters } from '@/components/SearchAndFilters';
@@ -36,12 +47,17 @@ const EVENT_COLOR_GRADIENTS = [
   'linear-gradient(to right, transparent, #ec4899, transparent)', // Pink
 ];
 
+type CollapseState = 'expanded' | 'collapsed' | 'oneRow';
+
 export default function Home() {
   const [data, setData] = useState<RoomingList[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  
+  // Collapse state for each event group
+  const [collapseStates, setCollapseStates] = useState<Record<string, CollapseState>>({});
 
   // Fetch data on component mount
   useEffect(() => {
@@ -115,6 +131,38 @@ export default function Home() {
       .sort((a, b) => a.eventName.localeCompare(b.eventName));
   }, [filteredData]);
 
+  // Initialize collapse states for new groups
+  useEffect(() => {
+    const newStates: Record<string, CollapseState> = {};
+    groupedByEvent.forEach((group) => {
+      if (!(group.eventId in collapseStates)) {
+        newStates[group.eventId] = 'expanded';
+      }
+    });
+    if (Object.keys(newStates).length > 0) {
+      setCollapseStates((prev) => ({ ...prev, ...newStates }));
+    }
+  }, [groupedByEvent, collapseStates]);
+
+  // Toggle collapse state for a specific event
+  const toggleCollapseState = (eventId: string) => {
+    setCollapseStates((prev) => {
+      const current = prev[eventId] || 'expanded';
+      const next: CollapseState =
+        current === 'expanded' ? 'oneRow' : current === 'oneRow' ? 'collapsed' : 'expanded';
+      return { ...prev, [eventId]: next };
+    });
+  };
+
+  // Set all groups to a specific state
+  const setAllCollapseStates = (state: CollapseState) => {
+    const newStates: Record<string, CollapseState> = {};
+    groupedByEvent.forEach((group) => {
+      newStates[group.eventId] = state;
+    });
+    setCollapseStates(newStates);
+  };
+
   // Toggle status filter
   const handleStatusToggle = (status: string) => {
     setSelectedStatuses((prev) =>
@@ -128,6 +176,16 @@ export default function Home() {
     setDebouncedSearchQuery('');
     setSelectedStatuses([]);
   }, []);
+
+  // Calculate how many items to show based on collapse state
+  const getVisibleItems = (items: RoomingList[], state: CollapseState) => {
+    if (state === 'collapsed') return [];
+    if (state === 'oneRow') {
+      // Show first 4 items (one row on desktop)
+      return items.slice(0, 4);
+    }
+    return items; // expanded
+  };
 
   if (loading) {
     return (
@@ -162,56 +220,155 @@ export default function Home() {
           availableStatuses={availableStatuses}
         />
 
-        {/* Results count */}
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Showing {filteredData.length} of {data.length} events
-        </Typography>
+        {/* Results count and global controls */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="body2" color="text.secondary">
+            Showing {filteredData.length} of {data.length} events
+          </Typography>
+
+          {/* Global collapse controls */}
+          <ButtonGroup size="small" variant="outlined">
+            <Button
+              startIcon={<UnfoldMoreIcon />}
+              onClick={() => setAllCollapseStates('expanded')}
+              sx={{ textTransform: 'none' }}
+            >
+              Expand All
+            </Button>
+            <Button
+              startIcon={<ViewAgendaIcon />}
+              onClick={() => setAllCollapseStates('oneRow')}
+              sx={{ textTransform: 'none' }}
+            >
+              One Row
+            </Button>
+            <Button
+              startIcon={<UnfoldLessIcon />}
+              onClick={() => setAllCollapseStates('collapsed')}
+              sx={{ textTransform: 'none' }}
+            >
+              Collapse All
+            </Button>
+          </ButtonGroup>
+        </Box>
 
         {/* Grouped by Event */}
-        {groupedByEvent.map((group, groupIndex) => (
-          <Box key={group.eventId} sx={{ mb: 6 }}>
-            {/* Event Divider with Name */}
-            <Box sx={{ position: 'relative', mb: 4 }}>
-              <Divider
-                sx={{
-                  background: EVENT_COLOR_GRADIENTS[groupIndex % EVENT_COLOR_GRADIENTS.length],
-                  height: 2,
-                }}
-              />
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  bgcolor: 'background.default',
-                  px: 3,
-                  py: 1,
-                }}
-              >
-                <Typography
-                  variant="h6"
+        {groupedByEvent.map((group, groupIndex) => {
+          const state = collapseStates[group.eventId] || 'expanded';
+          const visibleItems = getVisibleItems(group.items, state);
+          const color = EVENT_COLORS[groupIndex % EVENT_COLORS.length];
+          const gradient = EVENT_COLOR_GRADIENTS[groupIndex % EVENT_COLOR_GRADIENTS.length];
+
+          return (
+            <Box key={group.eventId} sx={{ mb: 6 }}>
+              {/* Event Divider with Name and Toggle */}
+              <Box sx={{ position: 'relative', mb: 4 }}>
+                <Divider
                   sx={{
-                    fontWeight: 700,
-                    color: EVENT_COLORS[groupIndex % EVENT_COLORS.length],
-                    textAlign: 'center',
+                    background: gradient,
+                    height: 2,
+                  }}
+                />
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    bgcolor: 'background.default',
+                    px: 2,
+                    py: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
                   }}
                 >
-                  {group.eventName}
-                </Typography>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 700,
+                      color,
+                      textAlign: 'center',
+                    }}
+                  >
+                    {group.eventName}
+                  </Typography>
+                  <IconButton
+                    size="small"
+                    onClick={() => toggleCollapseState(group.eventId)}
+                    sx={{
+                      color,
+                      transition: 'transform 0.3s ease',
+                      '&:hover': {
+                        bgcolor: `${color}15`,
+                      },
+                    }}
+                  >
+                    {state === 'expanded' ? (
+                      <ExpandLessIcon />
+                    ) : state === 'oneRow' ? (
+                      <ViewAgendaIcon />
+                    ) : (
+                      <ExpandMoreIcon />
+                    )}
+                  </IconButton>
+                  <Typography variant="caption" color="text.secondary">
+                    ({group.items.length})
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
 
-            {/* Card grid for this event */}
-            <Grid container justifyContent="stretch" spacing={3}>
-              {group.items.map((item) => (
-                <Grid item size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={item.roomingListId}>
-                  <RFPCard data={item} />
+              {/* Card grid for this event with smooth animation */}
+              <Collapse
+                in={state !== 'collapsed'}
+                timeout={500}
+                unmountOnExit
+              >
+                <Grid
+                  container
+                  justifyContent="stretch"
+                  spacing={3}
+                  sx={{
+                    transition: 'all 0.5s ease-in-out',
+                  }}
+                >
+                  {visibleItems.map((item, index) => (
+                    <Grid
+                      item
+                      size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                      key={item.roomingListId}
+                      sx={{
+                        transition: 'all 0.3s ease-in-out',
+                        transitionDelay: `${index * 50}ms`,
+                      }}
+                    >
+                      <RFPCard data={item} />
+                    </Grid>
+                  ))}
                 </Grid>
-              ))}
-            </Grid>
-          </Box>
-        ))}
+
+                {/* Show "X more items" indicator for oneRow state */}
+                {state === 'oneRow' && group.items.length > 4 && (
+                  <Box
+                    sx={{
+                      mt: 2,
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        opacity: 0.7,
+                      },
+                    }}
+                    onClick={() => toggleCollapseState(group.eventId)}
+                  >
+                    <Typography variant="body2" color={color} sx={{ fontWeight: 600 }}>
+                      + {group.items.length - 4} more items
+                    </Typography>
+                  </Box>
+                )}
+              </Collapse>
+            </Box>
+          );
+        })}
 
         {/* Empty state */}
         {filteredData.length === 0 && (
@@ -224,4 +381,4 @@ export default function Home() {
       </Container>
     </Box>
   );
-}
+};
