@@ -1,4 +1,4 @@
-import { Box, Button, Typography, Container } from '@mui/material';
+import { Container, Box, Typography, Button } from '@mui/material';
 import { Home } from '@mui/icons-material';
 import { useLocation } from 'wouter';
 
@@ -6,25 +6,15 @@ export default function NotFound() {
   const [, setLocation] = useLocation();
 
   return (
-    <Container maxWidth="sm">
-      <Box
-        sx={{
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center',
-          gap: 3,
-        }}
-      >
+    <Container maxWidth="sm" sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ textAlign: 'center', width: '100%' }}>
         <Typography variant="h1" sx={{ fontSize: '6rem', fontWeight: 800, color: 'primary.main' }}>
           404
         </Typography>
-        <Typography variant="h4" sx={{ fontWeight: 600 }}>
+        <Typography variant="h4" sx={{ fontWeight: 600, mb: 2 }}>
           Page Not Found
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
           The page you're looking for doesn't exist or has been moved.
         </Typography>
         <Button

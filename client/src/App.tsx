@@ -1,34 +1,35 @@
-import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import { Route, Switch } from 'wouter';
-import ErrorBoundary from './components/ErrorBoundary';
-import Home from './pages/Home';
-import NotFound from './pages/NotFound';
+import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { Route, Switch } from "wouter";
+import ErrorBoundary from "./components/ErrorBoundary";
+import Home from "./pages/Home";
+import NotFound from "./pages/NotFound";
+import { Layout } from "./components/layout/Layout";
 
 // Create Material-UI theme
 const theme = createTheme({
   palette: {
-    mode: 'light',
+    mode: "light",
     primary: {
-      main: '#6366f1', // Indigo
-      light: '#818cf8',
-      dark: '#4f46e5',
-      50: '#eef2ff',
-      100: '#e0e7ff',
-      200: '#c7d2fe',
+      main: "#2563eb", // Blue
+      light: "#3b82f6",
+      dark: "#1d4ed8",
+      50: "#eff6ff",
+      100: "#dbeafe",
+      200: "#bfdbfe",
     },
     secondary: {
-      main: '#a855f7', // Purple
-      light: '#c084fc',
-      dark: '#9333ea',
+      main: "#a855f7", // Purple
+      light: "#c084fc",
+      dark: "#9333ea",
     },
     info: {
-      main: '#06b6d4', // Cyan
-      light: '#22d3ee',
-      dark: '#0891b2',
+      main: "#06b6d4", // Cyan
+      light: "#22d3ee",
+      dark: "#0891b2",
     },
     background: {
-      default: '#f9fafb',
-      paper: '#ffffff',
+      default: "#f9fafb",
+      paper: "#ffffff",
     },
   },
   typography: {
@@ -47,7 +48,7 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: 'none',
+          textTransform: "none",
           fontWeight: 600,
           borderRadius: 8,
         },
@@ -73,11 +74,13 @@ const theme = createTheme({
 
 function Router() {
   return (
-    <Switch>
-      <Route path={'/'} component={Home} />
-      <Route path={'/404'} component={NotFound} />
-      <Route component={NotFound} />
-    </Switch>
+    <Layout>
+      <Switch>
+        <Route path={"/"} component={Home} />
+        <Route path={"/404"} component={NotFound} />
+        <Route component={NotFound} />
+      </Switch>
+    </Layout>
   );
 }
 
