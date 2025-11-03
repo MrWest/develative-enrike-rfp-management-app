@@ -9,8 +9,6 @@ export async function fetchRoomingLists({
   // Current implementation: Load from local JSON
   const response = await fetch("/data/rfp-data.json");
 
-  console.log("xxx: ", search, status);
-
   if (!response.ok) {
     throw new Error(`Failed to load rooming lists: ${response.statusText}`);
   }

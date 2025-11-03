@@ -114,17 +114,19 @@ export function SearchAndFilters({}: SearchAndFiltersProps) {
                     <Search />
                   </InputAdornment>
                 ),
-                endAdornment: searchQuery && (
+                endAdornment: 
                   <InputAdornment position="end">
                     <IconButton
                       size="small"
                       onClick={() => setSearchQuery("")}
                       edge="end"
+                      disabled={!searchQuery}
+                      sx={{ visibility: searchQuery ? 'visible' : 'hidden' }}
                     >
                       <Close fontSize="small" />
                     </IconButton>
                   </InputAdornment>
-                ),
+                ,
               }}
               sx={{
                 maxWidth: { sm: 400 },
