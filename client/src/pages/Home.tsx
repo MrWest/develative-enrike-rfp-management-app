@@ -177,16 +177,6 @@ export default function Home() {
     setSelectedStatuses([]);
   }, []);
 
-  // Calculate how many items to show based on collapse state
-  const getVisibleItems = (items: RoomingList[], state: CollapseState) => {
-    if (state === 'collapsed') return [];
-    if (state === 'oneRow') {
-      // Show first 4 items (one row on desktop)
-      return items.slice(0, 4);
-    }
-    return items; // expanded
-  };
-
   if (loading) {
     return (
       <Box
@@ -255,7 +245,6 @@ export default function Home() {
         {/* Grouped by Event */}
         {groupedByEvent.map((group, groupIndex) => {
           const state = collapseStates[group.eventId] || 'expanded';
-          const visibleItems = getVisibleItems(group.items, state);
           const color = EVENT_COLORS[groupIndex % EVENT_COLORS.length];
           const gradient = EVENT_COLOR_GRADIENTS[groupIndex % EVENT_COLOR_GRADIENTS.length];
 
@@ -318,54 +307,85 @@ export default function Home() {
                 </Box>
               </Box>
 
-              {/* Card grid for this event with smooth animation */}
-              <Collapse
-                in={state !== 'collapsed'}
-                timeout={500}
-                unmountOnExit
-              >
-                <Grid
-                  container
-                  justifyContent="stretch"
-                  spacing={3}
-                  sx={{
-                    transition: 'all 0.5s ease-in-out',
-                  }}
-                >
-                  {visibleItems.map((item, index) => (
-                    <Grid
-                      item
-                      size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
-                      key={item.roomingListId}
-                      sx={{
-                        transition: 'all 0.3s ease-in-out',
-                        transitionDelay: `${index * 50}ms`,
-                      }}
-                    >
-                      <RFPCard data={item} />
-                    </Grid>
-                  ))}
-                </Grid>
+              {/* Collapsed state */}
+              {state === 'collapsed' && null}
 
-                {/* Show "X more items" indicator for oneRow state */}
-                {state === 'oneRow' && group.items.length > 4 && (
+              {/* One Row state - Horizontal scroll */}
+              {state === 'oneRow' && (
+                <Collapse in={true} timeout={500}>
                   <Box
                     sx={{
-                      mt: 2,
-                      textAlign: 'center',
-                      cursor: 'pointer',
-                      '&:hover': {
-                        opacity: 0.7,
+                      display: 'flex',
+                      gap: 3,
+                      overflowX: 'auto',
+                      pb: 2,
+                      // Custom scrollbar styling
+                      '&::-webkit-scrollbar': {
+                        height: '12px',
                       },
+                      '&::-webkit-scrollbar-track': {
+                        backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                        borderRadius: '10px',
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        backgroundColor: color,
+                        borderRadius: '10px',
+                        border: '2px solid transparent',
+                        backgroundClip: 'content-box',
+                        '&:hover': {
+                          backgroundColor: color,
+                          opacity: 0.8,
+                        },
+                      },
+                      // Firefox scrollbar
+                      scrollbarWidth: 'thin',
+                      scrollbarColor: `${color} rgba(0, 0, 0, 0.05)`,
                     }}
-                    onClick={() => toggleCollapseState(group.eventId)}
                   >
-                    <Typography variant="body2" color={color} sx={{ fontWeight: 600 }}>
-                      + {group.items.length - 4} more items
-                    </Typography>
+                    {group.items.map((item, index) => (
+                      <Box
+                        key={item.roomingListId}
+                        sx={{
+                          minWidth: { xs: '280px', sm: '320px', md: '350px' },
+                          maxWidth: { xs: '280px', sm: '320px', md: '350px' },
+                          transition: 'all 0.3s ease-in-out',
+                          transitionDelay: `${index * 30}ms`,
+                        }}
+                      >
+                        <RFPCard data={item} />
+                      </Box>
+                    ))}
                   </Box>
-                )}
-              </Collapse>
+                </Collapse>
+              )}
+
+              {/* Expanded state - Grid layout */}
+              {state === 'expanded' && (
+                <Collapse in={true} timeout={500}>
+                  <Grid
+                    container
+                    justifyContent="stretch"
+                    spacing={3}
+                    sx={{
+                      transition: 'all 0.5s ease-in-out',
+                    }}
+                  >
+                    {group.items.map((item, index) => (
+                      <Grid
+                        item
+                        size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                        key={item.roomingListId}
+                        sx={{
+                          transition: 'all 0.3s ease-in-out',
+                          transitionDelay: `${index * 50}ms`,
+                        }}
+                      >
+                        <RFPCard data={item} />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Collapse>
+              )}
             </Box>
           );
         })}
@@ -377,8 +397,8 @@ export default function Home() {
               No events found matching your criteria.
             </Typography>
           </Box>
-        )}
+          )}
       </Container>
     </Box>
   );
-};
+}
