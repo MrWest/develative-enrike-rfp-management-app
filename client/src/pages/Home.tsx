@@ -22,7 +22,7 @@ import { useQuery } from "@tanstack/react-query";
 import { RoomingList } from "@/../../shared/types";
 import { RFPCard } from "@/components/RFPCard";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
-import { fetchRoomingLists } from "@/lib/api";
+import { fetchRoomingLists, fetchStatuses } from "@/lib/api";
 import _ from "lodash";
 
 // Color palette for event dividers
@@ -72,6 +72,12 @@ export default function Home() {
     initialData: [],
   });
 
+  const { data: availableStatuses } = useQuery({
+    queryKey: ["rfp-statuses"],
+    queryFn: () => fetchStatuses(),
+    initialData: [],
+  });
+
   const filteredData = data;
 
   const debouncedSearch = _.debounce((s) => {
@@ -82,12 +88,6 @@ export default function Home() {
   useEffect(() => {
     debouncedSearch(searchQuery);
   }, [searchQuery]);
-
-  // Get unique statuses from data
-  const availableStatuses = useMemo(() => {
-    const statuses = new Set(filteredData.map((item) => item.status));
-    return Array.from(statuses).sort();
-  }, [data]);
 
   // Group filtered data by eventId
   const groupedByEvent = useMemo(() => {
