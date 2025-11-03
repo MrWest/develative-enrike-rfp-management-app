@@ -39,6 +39,7 @@ export function SearchAndFilters({}: SearchAndFiltersProps) {
 
   const query = useQueryParams();
   const search = query.get("search");
+  const status = query.get('statuses') ? query.get('statuses').split() : [];
 
   const debouncedQuery = _.debounce((key, value) => {
     const url = new URL(window.location.href);
@@ -56,7 +57,8 @@ export function SearchAndFilters({}: SearchAndFiltersProps) {
 
   useEffect(() => {
     setSearchQuery(search);
-  }, [search]);
+    setSelectedStatuses(status);
+  }, []);
 
   const handleFilterClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
