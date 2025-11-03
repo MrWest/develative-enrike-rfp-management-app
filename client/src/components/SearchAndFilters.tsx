@@ -14,29 +14,46 @@ import {
   Grid,
 } from "@mui/material";
 import { Search, FilterList, Close } from "@mui/icons-material";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { XCircleIcon } from "lucide-react";
+import { fetchStatuses } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+import useQueryParams from "@/hooks/useQueryParams";
 
 interface SearchAndFiltersProps {
-  searchQuery: string;
-  onSearchChange: (value: string) => void;
-  selectedStatuses: string[];
-  onStatusToggle: (status: string) => void;
-  onClearFilters: () => void;
-  availableStatuses: string[];
+  // searchQuery: string;
+  // onSearchChange: (value: string) => void;
+  // selectedStatuses: string[];
+  // onStatusToggle: (status: string) => void;
+  // onClearFilters: () => void;
+  // availableStatuses: string[];
 }
 
-export function SearchAndFilters({
-  searchQuery,
-  onSearchChange,
-  selectedStatuses,
-  onStatusToggle,
-  onClearFilters,
-  availableStatuses,
-}: SearchAndFiltersProps) {
+export function SearchAndFilters({}: SearchAndFiltersProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [searchQuery, setSearchQuery] = useState<string | null>("");
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const hasActiveFilters =
-    selectedStatuses.length > 0 || searchQuery.length > 0;
+    selectedStatuses.length > 0 || searchQuery?.length > 0;
+
+  const query = useQueryParams();
+  const search = query.get("search");
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("search", searchQuery);
+    window.history.replaceState({}, "", url);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("statuses", selectedStatuses.join());
+    window.history.replaceState({}, "", url);
+  }, [selectedStatuses]);
+
+  useEffect(() => {
+    setSearchQuery(search);
+  }, [search]);
 
   const handleFilterClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -45,6 +62,28 @@ export function SearchAndFilters({
   const handleFilterClose = () => {
     setAnchorEl(null);
   };
+
+  const { data: availableStatuses } = useQuery({
+    queryKey: ["rfp-statuses"],
+    queryFn: () => fetchStatuses(),
+    initialData: [],
+  });
+
+  // Toggle status filter
+  const handleStatusToggle = (status: string) => {
+    setSelectedStatuses((prev) =>
+      prev.includes(status)
+        ? prev.filter((s) => s !== status)
+        : [...prev, status]
+    );
+  };
+
+  // Clear all filters
+  const handleClearFilters = useCallback(() => {
+    // setSearchQuery("");
+    // setDebouncedSearchQuery("");
+    setSelectedStatuses([]);
+  }, []);
 
   return (
     <Box sx={{ mb: { xs: 2, sm: 4 } }}>
@@ -61,7 +100,7 @@ export function SearchAndFilters({
               fullWidth
               placeholder="Search"
               value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment
@@ -79,7 +118,7 @@ export function SearchAndFilters({
                   <InputAdornment position="end">
                     <IconButton
                       size="small"
-                      onClick={() => onSearchChange("")}
+                      onClick={() => setSearchQuery("")}
                       edge="end"
                     >
                       <Close fontSize="small" />
@@ -151,7 +190,7 @@ export function SearchAndFilters({
                       <Button
                         variant="text"
                         size="small"
-                        onClick={onClearFilters}
+                        onClick={handleClearFilters}
                         sx={{
                           textTransform: "none",
                           fontSize: { xs: 10, sm: 12 },
@@ -166,7 +205,7 @@ export function SearchAndFilters({
                 {availableStatuses.map((status) => (
                   <MenuItem
                     key={status}
-                    onClick={() => onStatusToggle(status)}
+                    onClick={() => handleStatusToggle(status)}
                     dense
                   >
                     <FormControlLabel

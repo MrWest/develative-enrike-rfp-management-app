@@ -22,8 +22,9 @@ import { useQuery } from "@tanstack/react-query";
 import { RoomingList } from "@/../../shared/types";
 import { RFPCard } from "@/components/RFPCard";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
-import { fetchRoomingLists, fetchStatuses } from "@/lib/api";
+import { fetchRoomingLists } from "@/lib/api";
 import _ from "lodash";
+import useQueryParams from "@/hooks/useQueryParams";
 
 // Color palette for event dividers
 const EVENT_COLORS = [
@@ -53,14 +54,16 @@ type CollapseState = "expanded" | "collapsed" | "oneRow";
 
 export default function Home() {
   // const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
 
   // Collapse state for each event group
   const [collapseStates, setCollapseStates] = useState<
     Record<string, CollapseState>
   >({});
+
+  const query = useQueryParams();
+  const searchQuery = query.get('search');
+  const selectedStatuses = query.get('statuses') ? query.get('statuses').split() : [];
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["rfp", debouncedSearchQuery, selectedStatuses],
@@ -69,12 +72,6 @@ export default function Home() {
         search: debouncedSearchQuery,
         status: selectedStatuses,
       }),
-    initialData: [],
-  });
-
-  const { data: availableStatuses } = useQuery({
-    queryKey: ["rfp-statuses"],
-    queryFn: () => fetchStatuses(),
     initialData: [],
   });
 
@@ -153,22 +150,6 @@ export default function Home() {
     setCollapseStates(newStates);
   };
 
-  // Toggle status filter
-  const handleStatusToggle = (status: string) => {
-    setSelectedStatuses((prev) =>
-      prev.includes(status)
-        ? prev.filter((s) => s !== status)
-        : [...prev, status]
-    );
-  };
-
-  // Clear all filters
-  const handleClearFilters = useCallback(() => {
-    setSearchQuery("");
-    setDebouncedSearchQuery("");
-    setSelectedStatuses([]);
-  }, []);
-
   if (isLoading) {
     return (
       <Box
@@ -195,14 +176,7 @@ export default function Home() {
         </Typography>
 
         {/* Search and filters */}
-        <SearchAndFilters
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          selectedStatuses={selectedStatuses}
-          onStatusToggle={handleStatusToggle}
-          onClearFilters={handleClearFilters}
-          availableStatuses={availableStatuses}
-        />
+        <SearchAndFilters />
 
         {/* Results count and global controls */}
         <Grid
