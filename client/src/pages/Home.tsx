@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Container,
   Typography,
@@ -10,71 +10,77 @@ import {
   ButtonGroup,
   Button,
   Collapse,
-} from '@mui/material';
+} from "@mui/material";
 import {
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
   UnfoldMore as UnfoldMoreIcon,
   UnfoldLess as UnfoldLessIcon,
   ViewAgenda as ViewAgendaIcon,
-} from '@mui/icons-material';
-import { useQuery } from '@tanstack/react-query';
-import { RoomingList } from '@/../../shared/types';
-import { RFPCard } from '@/components/RFPCard';
-import { SearchAndFilters } from '@/components/SearchAndFilters';
-import { fetchRoomingLists } from '@/lib/api';
+} from "@mui/icons-material";
+import { useQuery } from "@tanstack/react-query";
+import { RoomingList } from "@/../../shared/types";
+import { RFPCard } from "@/components/RFPCard";
+import { SearchAndFilters } from "@/components/SearchAndFilters";
+import { fetchRoomingLists } from "@/lib/api";
+import _ from "lodash";
 
 // Color palette for event dividers
 const EVENT_COLORS = [
-  '#2563eb', // Blue
-  '#a855f7', // Purple
-  '#06b6d4', // Cyan
-  '#f59e0b', // Amber
-  '#10b981', // Emerald
-  '#ef4444', // Red
-  '#8b5cf6', // Violet
-  '#ec4899', // Pink
+  "#2563eb", // Blue
+  "#a855f7", // Purple
+  "#06b6d4", // Cyan
+  "#f59e0b", // Amber
+  "#10b981", // Emerald
+  "#ef4444", // Red
+  "#8b5cf6", // Violet
+  "#ec4899", // Pink
 ];
 
 // Color gradients for event dividers (transparent → color → transparent)
 const EVENT_COLOR_GRADIENTS = [
-  'linear-gradient(to right, transparent, #2563eb, transparent)', // Blue
-  'linear-gradient(to right, transparent, #a855f7, transparent)', // Purple
-  'linear-gradient(to right, transparent, #06b6d4, transparent)', // Cyan
-  'linear-gradient(to right, transparent, #f59e0b, transparent)', // Amber
-  'linear-gradient(to right, transparent, #10b981, transparent)', // Emerald
-  'linear-gradient(to right, transparent, #ef4444, transparent)', // Red
-  'linear-gradient(to right, transparent, #8b5cf6, transparent)', // Violet
-  'linear-gradient(to right, transparent, #ec4899, transparent)', // Pink
+  "linear-gradient(to right, transparent, #2563eb, transparent)", // Blue
+  "linear-gradient(to right, transparent, #a855f7, transparent)", // Purple
+  "linear-gradient(to right, transparent, #06b6d4, transparent)", // Cyan
+  "linear-gradient(to right, transparent, #f59e0b, transparent)", // Amber
+  "linear-gradient(to right, transparent, #10b981, transparent)", // Emerald
+  "linear-gradient(to right, transparent, #ef4444, transparent)", // Red
+  "linear-gradient(to right, transparent, #8b5cf6, transparent)", // Violet
+  "linear-gradient(to right, transparent, #ec4899, transparent)", // Pink
 ];
 
-type CollapseState = 'expanded' | 'collapsed' | 'oneRow';
+type CollapseState = "expanded" | "collapsed" | "oneRow";
 
 export default function Home() {
   // const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
-  
+
   // Collapse state for each event group
-  const [collapseStates, setCollapseStates] = useState<Record<string, CollapseState>>({});
+  const [collapseStates, setCollapseStates] = useState<
+    Record<string, CollapseState>
+  >({});
 
-
-   const { data, isPending, error } = useQuery({
-    queryKey: ['rfp'],
-    queryFn: () => fetchRoomingLists({ search: debouncedSearchQuery, status: selectedStatuses }),
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["rfp"],
+    queryFn: () =>
+      fetchRoomingLists({
+        search: debouncedSearchQuery,
+        status: selectedStatuses,
+      }),
     initialData: [],
   });
 
   const filteredData = data;
 
+  const debouncedSearch = _.debounce((s) => {
+    setDebouncedSearchQuery(s);
+  }, 300);
+
   // Debounce search query
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 300);
-
-    return () => clearTimeout(timer);
+    debouncedSearch(searchQuery);
   }, [searchQuery]);
 
   // Get unique statuses from data
@@ -85,7 +91,10 @@ export default function Home() {
 
   // Group filtered data by eventId
   const groupedByEvent = useMemo(() => {
-    const groups = new Map<string, { eventName: string; items: RoomingList[] }>();
+    const groups = new Map<
+      string,
+      { eventName: string; items: RoomingList[] }
+    >();
 
     filteredData.forEach((item) => {
       const key = item.eventId;
@@ -113,7 +122,7 @@ export default function Home() {
     const newStates: Record<string, CollapseState> = {};
     groupedByEvent.forEach((group) => {
       if (!(group.eventId in collapseStates)) {
-        newStates[group.eventId] = 'expanded';
+        newStates[group.eventId] = "expanded";
       }
     });
     if (Object.keys(newStates).length > 0) {
@@ -124,9 +133,13 @@ export default function Home() {
   // Toggle collapse state for a specific event
   const toggleCollapseState = (eventId: string) => {
     setCollapseStates((prev) => {
-      const current = prev[eventId] || 'expanded';
+      const current = prev[eventId] || "expanded";
       const next: CollapseState =
-        current === 'expanded' ? 'oneRow' : current === 'oneRow' ? 'collapsed' : 'expanded';
+        current === "expanded"
+          ? "oneRow"
+          : current === "oneRow"
+            ? "collapsed"
+            : "expanded";
       return { ...prev, [eventId]: next };
     });
   };
@@ -143,25 +156,27 @@ export default function Home() {
   // Toggle status filter
   const handleStatusToggle = (status: string) => {
     setSelectedStatuses((prev) =>
-      prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]
+      prev.includes(status)
+        ? prev.filter((s) => s !== status)
+        : [...prev, status]
     );
   };
 
   // Clear all filters
   const handleClearFilters = useCallback(() => {
-    setSearchQuery('');
-    setDebouncedSearchQuery('');
+    setSearchQuery("");
+    setDebouncedSearchQuery("");
     setSelectedStatuses([]);
   }, []);
 
-  if (isPending) {
+  if (isLoading) {
     return (
       <Box
         sx={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         <CircularProgress size={40} />
@@ -169,8 +184,12 @@ export default function Home() {
     );
   }
 
+  console.log("xxx: kk", debouncedSearchQuery, selectedStatuses);
+
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pt: 2, pb: 4 }}>
+    <Box
+      sx={{ minHeight: "100vh", bgcolor: "background.default", pt: 2, pb: 4 }}
+    >
       <Container maxWidth="xl">
         {/* Page title */}
         <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 2 }}>
@@ -188,7 +207,14 @@ export default function Home() {
         />
 
         {/* Results count and global controls */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
           <Typography variant="body2" color="text.secondary">
             Showing {filteredData.length} of {data.length} events
           </Typography>
@@ -197,22 +223,22 @@ export default function Home() {
           <ButtonGroup size="small" variant="outlined">
             <Button
               startIcon={<UnfoldMoreIcon />}
-              onClick={() => setAllCollapseStates('expanded')}
-              sx={{ textTransform: 'none' }}
+              onClick={() => setAllCollapseStates("expanded")}
+              sx={{ textTransform: "none" }}
             >
               Expand All
             </Button>
             <Button
               startIcon={<ViewAgendaIcon />}
-              onClick={() => setAllCollapseStates('oneRow')}
-              sx={{ textTransform: 'none' }}
+              onClick={() => setAllCollapseStates("oneRow")}
+              sx={{ textTransform: "none" }}
             >
               One Row
             </Button>
             <Button
               startIcon={<UnfoldLessIcon />}
-              onClick={() => setAllCollapseStates('collapsed')}
-              sx={{ textTransform: 'none' }}
+              onClick={() => setAllCollapseStates("collapsed")}
+              sx={{ textTransform: "none" }}
             >
               Collapse All
             </Button>
@@ -221,14 +247,15 @@ export default function Home() {
 
         {/* Grouped by Event */}
         {groupedByEvent.map((group, groupIndex) => {
-          const state = collapseStates[group.eventId] || 'expanded';
+          const state = collapseStates[group.eventId] || "expanded";
           const color = EVENT_COLORS[groupIndex % EVENT_COLORS.length];
-          const gradient = EVENT_COLOR_GRADIENTS[groupIndex % EVENT_COLOR_GRADIENTS.length];
+          const gradient =
+            EVENT_COLOR_GRADIENTS[groupIndex % EVENT_COLOR_GRADIENTS.length];
 
           return (
             <Box key={group.eventId} sx={{ mb: 6 }}>
               {/* Event Divider with Name and Toggle */}
-              <Box sx={{ position: 'relative', mb: 4 }}>
+              <Box sx={{ position: "relative", mb: 4 }}>
                 <Divider
                   sx={{
                     background: gradient,
@@ -237,15 +264,15 @@ export default function Home() {
                 />
                 <Box
                   sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    bgcolor: 'background.default',
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    bgcolor: "background.default",
                     px: 2,
                     py: 1,
-                    display: 'flex',
-                    alignItems: 'center',
+                    display: "flex",
+                    alignItems: "center",
                     gap: 1,
                   }}
                 >
@@ -254,7 +281,7 @@ export default function Home() {
                     sx={{
                       fontWeight: 700,
                       color,
-                      textAlign: 'center',
+                      textAlign: "center",
                     }}
                   >
                     {group.eventName}
@@ -264,15 +291,15 @@ export default function Home() {
                     onClick={() => toggleCollapseState(group.eventId)}
                     sx={{
                       color,
-                      transition: 'transform 0.3s ease',
-                      '&:hover': {
+                      transition: "transform 0.3s ease",
+                      "&:hover": {
                         bgcolor: `${color}15`,
                       },
                     }}
                   >
-                    {state === 'expanded' ? (
+                    {state === "expanded" ? (
                       <ExpandLessIcon />
-                    ) : state === 'oneRow' ? (
+                    ) : state === "oneRow" ? (
                       <ViewAgendaIcon />
                     ) : (
                       <ExpandMoreIcon />
@@ -285,37 +312,37 @@ export default function Home() {
               </Box>
 
               {/* Collapsed state */}
-              {state === 'collapsed' && null}
+              {state === "collapsed" && null}
 
               {/* One Row state - Horizontal scroll */}
-              {state === 'oneRow' && (
+              {state === "oneRow" && (
                 <Collapse in={true} timeout={500}>
                   <Box
                     sx={{
-                      display: 'flex',
+                      display: "flex",
                       gap: 3,
-                      overflowX: 'auto',
+                      overflowX: "auto",
                       pb: 2,
                       // Custom scrollbar styling
-                      '&::-webkit-scrollbar': {
-                        height: '12px',
+                      "&::-webkit-scrollbar": {
+                        height: "12px",
                       },
-                      '&::-webkit-scrollbar-track': {
-                        backgroundColor: 'rgba(0, 0, 0, 0.05)',
-                        borderRadius: '10px',
+                      "&::-webkit-scrollbar-track": {
+                        backgroundColor: "rgba(0, 0, 0, 0.05)",
+                        borderRadius: "10px",
                       },
-                      '&::-webkit-scrollbar-thumb': {
+                      "&::-webkit-scrollbar-thumb": {
                         backgroundColor: color,
-                        borderRadius: '10px',
-                        border: '2px solid transparent',
-                        backgroundClip: 'content-box',
-                        '&:hover': {
+                        borderRadius: "10px",
+                        border: "2px solid transparent",
+                        backgroundClip: "content-box",
+                        "&:hover": {
                           backgroundColor: color,
                           opacity: 0.8,
                         },
                       },
                       // Firefox scrollbar
-                      scrollbarWidth: 'thin',
+                      scrollbarWidth: "thin",
                       scrollbarColor: `${color} rgba(0, 0, 0, 0.05)`,
                     }}
                   >
@@ -323,9 +350,9 @@ export default function Home() {
                       <Box
                         key={item.roomingListId}
                         sx={{
-                          minWidth: { xs: '280px', sm: '320px', md: '350px' },
-                          maxWidth: { xs: '280px', sm: '320px', md: '350px' },
-                          transition: 'all 0.3s ease-in-out',
+                          minWidth: { xs: "280px", sm: "320px", md: "350px" },
+                          maxWidth: { xs: "280px", sm: "320px", md: "350px" },
+                          transition: "all 0.3s ease-in-out",
                           transitionDelay: `${index * 30}ms`,
                         }}
                       >
@@ -337,14 +364,14 @@ export default function Home() {
               )}
 
               {/* Expanded state - Grid layout */}
-              {state === 'expanded' && (
+              {state === "expanded" && (
                 <Collapse in={true} timeout={500}>
                   <Grid
                     container
                     justifyContent="stretch"
                     spacing={3}
                     sx={{
-                      transition: 'all 0.5s ease-in-out',
+                      transition: "all 0.5s ease-in-out",
                     }}
                   >
                     {group.items.map((item, index) => (
@@ -353,7 +380,7 @@ export default function Home() {
                         size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
                         key={item.roomingListId}
                         sx={{
-                          transition: 'all 0.3s ease-in-out',
+                          transition: "all 0.3s ease-in-out",
                           transitionDelay: `${index * 50}ms`,
                         }}
                       >
@@ -369,12 +396,12 @@ export default function Home() {
 
         {/* Empty state */}
         {filteredData.length === 0 && (
-          <Box sx={{ textAlign: 'center', py: 12 }}>
+          <Box sx={{ textAlign: "center", py: 12 }}>
             <Typography color="text.secondary">
               No events found matching your criteria.
             </Typography>
           </Box>
-          )}
+        )}
       </Container>
     </Box>
   );
