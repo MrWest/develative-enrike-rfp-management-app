@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { Search, FilterList, Close } from "@mui/icons-material";
 import { useState } from "react";
+import { XCircleIcon } from "lucide-react";
 
 interface SearchAndFiltersProps {
   searchQuery: string;
@@ -99,17 +100,6 @@ export function SearchAndFilters({
               variant="outlined"
             />
             <Stack direction="row" spacing={1} alignItems="center">
-              {hasActiveFilters && (
-                <Button
-                  variant="text"
-                  size="small"
-                  onClick={onClearFilters}
-                  sx={{ textTransform: "none", fontSize: { xs: 10, sm: 12 } }}
-                >
-                  Clear filters
-                </Button>
-              )}
-
               <Badge
                 badgeContent={selectedStatuses.length}
                 color="primary"
@@ -145,14 +135,34 @@ export function SearchAndFilters({
                   sx: { minWidth: 220, mt: 1 },
                 }}
               >
-                <Box sx={{ px: 2, py: 1 }}>
-                  <Typography
-                    variant="subtitle2"
-                    sx={{ fontWeight: 600, mb: 1 }}
-                  >
-                    Filter by Status
-                  </Typography>
-                </Box>
+                <Grid
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                  sx={{ px: 2, mb: 1 }}
+                >
+                  <Grid item>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+                      Filter by Status
+                    </Typography>
+                  </Grid>
+                  {hasActiveFilters && (
+                    <Grid item>
+                      <Button
+                        variant="text"
+                        size="small"
+                        onClick={onClearFilters}
+                        sx={{
+                          textTransform: "none",
+                          fontSize: { xs: 10, sm: 12 },
+                        }}
+                      >
+                        <XCircleIcon size={14} />
+                        <span style={{ marginLeft: 4 }}>Clear</span>
+                      </Button>
+                    </Grid>
+                  )}
+                </Grid>
                 {availableStatuses.map((status) => (
                   <MenuItem
                     key={status}

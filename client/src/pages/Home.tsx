@@ -184,8 +184,6 @@ export default function Home() {
     );
   }
 
-  console.log("xxx: kk", debouncedSearchQuery, selectedStatuses);
-
   return (
     <Box
       sx={{ minHeight: "100vh", bgcolor: "background.default", pt: 2, pb: 4 }}
