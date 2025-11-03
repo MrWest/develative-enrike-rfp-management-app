@@ -63,7 +63,7 @@ export default function Home() {
   >({});
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["rfp"],
+    queryKey: ["rfp", debouncedSearchQuery, selectedStatuses],
     queryFn: () =>
       fetchRoomingLists({
         search: debouncedSearchQuery,
