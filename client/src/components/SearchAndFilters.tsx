@@ -19,6 +19,7 @@ import { XCircleIcon } from "lucide-react";
 import { fetchStatuses } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import useQueryParams from "@/hooks/useQueryParams";
+import _ from "lodash";
 
 interface SearchAndFiltersProps {
   // searchQuery: string;
@@ -39,16 +40,18 @@ export function SearchAndFilters({}: SearchAndFiltersProps) {
   const query = useQueryParams();
   const search = query.get("search");
 
-  useEffect(() => {
+  const debouncedQuery = _.debounce((key, value) => {
     const url = new URL(window.location.href);
-    url.searchParams.set("search", searchQuery);
+    url.searchParams.set(key, value);
     window.history.replaceState({}, "", url);
+  }, 300);
+
+  useEffect(() => {
+    debouncedQuery("search", searchQuery);
   }, [searchQuery]);
 
   useEffect(() => {
-    const url = new URL(window.location.href);
-    url.searchParams.set("statuses", selectedStatuses.join());
-    window.history.replaceState({}, "", url);
+    debouncedQuery("statuses", selectedStatuses.join());
   }, [selectedStatuses]);
 
   useEffect(() => {
@@ -114,19 +117,19 @@ export function SearchAndFilters({}: SearchAndFiltersProps) {
                     <Search />
                   </InputAdornment>
                 ),
-                endAdornment: 
+                endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
                       size="small"
                       onClick={() => setSearchQuery("")}
                       edge="end"
                       disabled={!searchQuery}
-                      sx={{ visibility: searchQuery ? 'visible' : 'hidden' }}
+                      sx={{ visibility: searchQuery ? "visible" : "hidden" }}
                     >
                       <Close fontSize="small" />
                     </IconButton>
                   </InputAdornment>
-                ,
+                ),
               }}
               sx={{
                 maxWidth: { sm: 400 },
