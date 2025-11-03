@@ -1,5 +1,6 @@
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { Route, Switch } from "wouter";
+import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 import ErrorBoundary from "./components/ErrorBoundary";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
@@ -85,8 +86,17 @@ const theme = createTheme({
   },
 });
 
+const queryClient = new QueryClient();
+queryClient.setDefaultOptions({
+  queries: {
+    useErrorBoundary: true,
+    refetchOnWindowFocus: false
+  }
+});
+
 function Router() {
   return (
+    <QueryClientProvider client={queryClient}>
     <Layout>
       <Switch>
         <Route path={"/"} component={Home} />
@@ -94,6 +104,7 @@ function Router() {
         <Route component={NotFound} />
       </Switch>
     </Layout>
+    </QueryClientProvider>
   );
 }
 

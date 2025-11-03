@@ -18,6 +18,7 @@ import {
   UnfoldLess as UnfoldLessIcon,
   ViewAgenda as ViewAgendaIcon,
 } from '@mui/icons-material';
+import { useQuery } from '@tanstack/react-query';
 import { RoomingList } from '@/../../shared/types';
 import { RFPCard } from '@/components/RFPCard';
 import { SearchAndFilters } from '@/components/SearchAndFilters';
@@ -50,8 +51,7 @@ const EVENT_COLOR_GRADIENTS = [
 type CollapseState = 'expanded' | 'collapsed' | 'oneRow';
 
 export default function Home() {
-  const [data, setData] = useState<RoomingList[]>([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
@@ -59,21 +59,14 @@ export default function Home() {
   // Collapse state for each event group
   const [collapseStates, setCollapseStates] = useState<Record<string, CollapseState>>({});
 
-  // Fetch data on component mount
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const roomingLists = await fetchRoomingLists();
-        setData(roomingLists);
-      } catch (error) {
-        console.error('Error loading RFP data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    loadData();
-  }, []);
+   const { data, isPending, error } = useQuery({
+    queryKey: ['rfp'],
+    queryFn: () => fetchRoomingLists({ search: debouncedSearchQuery, status: selectedStatuses }),
+    initialData: [],
+  });
+
+  const filteredData = data;
 
   // Debounce search query
   useEffect(() => {
@@ -86,25 +79,9 @@ export default function Home() {
 
   // Get unique statuses from data
   const availableStatuses = useMemo(() => {
-    const statuses = new Set(data.map((item) => item.status));
+    const statuses = new Set(filteredData.map((item) => item.status));
     return Array.from(statuses).sort();
   }, [data]);
-
-  // Filter data based on search query and selected statuses
-  const filteredData = useMemo(() => {
-    return data.filter((item) => {
-      // Search filter (RFP name and agreement type)
-      const matchesSearch =
-        debouncedSearchQuery === '' ||
-        item.rfpName.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
-        item.agreement_type.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
-
-      // Status filter
-      const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(item.status);
-
-      return matchesSearch && matchesStatus;
-    });
-  }, [data, debouncedSearchQuery, selectedStatuses]);
 
   // Group filtered data by eventId
   const groupedByEvent = useMemo(() => {
@@ -177,7 +154,7 @@ export default function Home() {
     setSelectedStatuses([]);
   }, []);
 
-  if (loading) {
+  if (isPending) {
     return (
       <Box
         sx={{
