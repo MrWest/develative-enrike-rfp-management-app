@@ -207,43 +207,58 @@ export default function Home() {
         />
 
         {/* Results count and global controls */}
-        <Box
+        <Grid
+          container
+          justifyContent={{ xs: "center", sm: "space-between" }}
+          alignItems="center"
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 2,
+            mb: { xs: 4, sm: 2 },
           }}
         >
-          <Typography variant="body2" color="text.secondary">
-            Showing {filteredData.length} of {data.length} events
-          </Typography>
-
+          <Grid item>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{
+                fontSize: { xs: 12 },
+                textAlign: { xs: "center" },
+                mb: { xs: 1, sm: 0 },
+              }}
+            >
+              Showing {filteredData.length} of {data.length} events
+            </Typography>
+          </Grid>
           {/* Global collapse controls */}
-          <ButtonGroup size="small" variant="outlined">
-            <Button
-              startIcon={<UnfoldMoreIcon />}
-              onClick={() => setAllCollapseStates("expanded")}
-              sx={{ textTransform: "none" }}
+          <Grid item>
+            <ButtonGroup
+              size="small"
+              variant="outlined"
+              sx={{ width: { xs: "100%" }, justifyContent: { xs: "center" } }}
             >
-              Expand All
-            </Button>
-            <Button
-              startIcon={<ViewAgendaIcon />}
-              onClick={() => setAllCollapseStates("oneRow")}
-              sx={{ textTransform: "none" }}
-            >
-              One Row
-            </Button>
-            <Button
-              startIcon={<UnfoldLessIcon />}
-              onClick={() => setAllCollapseStates("collapsed")}
-              sx={{ textTransform: "none" }}
-            >
-              Collapse All
-            </Button>
-          </ButtonGroup>
-        </Box>
+              <Button
+                startIcon={<UnfoldMoreIcon />}
+                onClick={() => setAllCollapseStates("expanded")}
+                sx={{ textTransform: "none" }}
+              >
+                Expand All
+              </Button>
+              <Button
+                startIcon={<ViewAgendaIcon />}
+                onClick={() => setAllCollapseStates("oneRow")}
+                sx={{ textTransform: "none" }}
+              >
+                One Row
+              </Button>
+              <Button
+                startIcon={<UnfoldLessIcon />}
+                onClick={() => setAllCollapseStates("collapsed")}
+                sx={{ textTransform: "none" }}
+              >
+                Collapse All
+              </Button>
+            </ButtonGroup>
+          </Grid>
+        </Grid>
 
         {/* Grouped by Event */}
         {groupedByEvent.map((group, groupIndex) => {
@@ -270,7 +285,7 @@ export default function Home() {
                     transform: "translate(-50%, -50%)",
                     bgcolor: "background.default",
                     px: 2,
-                    py: 1,
+                    py: { xs: 0.2, sm: 1 },
                     display: "flex",
                     alignItems: "center",
                     gap: 1,
@@ -282,6 +297,7 @@ export default function Home() {
                       fontWeight: 700,
                       color,
                       textAlign: "center",
+                      fontSize: { xs: 12, sm: 16 },
                     }}
                   >
                     {group.eventName}

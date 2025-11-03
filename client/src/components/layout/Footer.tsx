@@ -1,5 +1,11 @@
-import { Box, Container, Typography, Link as MuiLink, Stack } from '@mui/material';
-import { GitHub as GitHubIcon } from '@mui/icons-material';
+import {
+  Box,
+  Container,
+  Typography,
+  Link as MuiLink,
+  Stack,
+} from "@mui/material";
+import { GitHub as GitHubIcon } from "@mui/icons-material";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -9,25 +15,29 @@ export function Footer() {
       component="footer"
       sx={{
         py: 3,
-        px: 2,
-        mt: 'auto',
+        px: { xs: 0, sm: 2 },
+        mt: "auto",
         backgroundColor: (theme) =>
-          theme.palette.mode === 'light'
+          theme.palette.mode === "light"
             ? theme.palette.grey[100]
             : theme.palette.grey[900],
-        borderTop: '1px solid',
-        borderColor: 'divider',
+        borderTop: "1px solid",
+        borderColor: "divider",
       }}
     >
       <Container maxWidth="xl">
         <Stack
-          direction={{ xs: 'column', sm: 'row' }}
+          direction={{ xs: "column", sm: "row" }}
           spacing={2}
           justifyContent="space-between"
           alignItems="center"
         >
           {/* Copyright */}
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ textAlign: { xs: "center" }, fontSize: { xs: 12 } }}
+          >
             © {currentYear} RFP Management App. Built with Material-UI & React.
           </Typography>
 
@@ -38,13 +48,13 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               sx={{
-                display: 'flex',
-                alignItems: 'center',
+                display: "flex",
+                alignItems: "center",
                 gap: 0.5,
-                color: 'text.secondary',
-                textDecoration: 'none',
-                '&:hover': {
-                  color: 'primary.main',
+                color: "text.secondary",
+                textDecoration: "none",
+                "&:hover": {
+                  color: "primary.main",
                 },
               }}
             >
@@ -56,4 +66,4 @@ export function Footer() {
       </Container>
     </Box>
   );
-};
+}

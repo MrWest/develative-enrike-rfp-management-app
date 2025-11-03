@@ -46,7 +46,7 @@ export function SearchAndFilters({
   };
 
   return (
-    <Box sx={{ mb: 4 }}>
+    <Box sx={{ mb: { xs: 2, sm: 4 } }}>
       {/* <Stack
         direction={{ sm: 'row' }}
         spacing={2}
@@ -104,7 +104,7 @@ export function SearchAndFilters({
                   variant="text"
                   size="small"
                   onClick={onClearFilters}
-                  sx={{ textTransform: "none" }}
+                  sx={{ textTransform: "none", fontSize: { xs: 10, sm: 12 } }}
                 >
                   Clear filters
                 </Button>
