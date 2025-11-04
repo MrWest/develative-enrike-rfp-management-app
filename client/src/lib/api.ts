@@ -1,9 +1,10 @@
 import { RoomingList } from "@/../../shared/types";
+import _ from "lodash";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
 export async function fetchRoomingLists({
-  search,
+  search = "",
   status,
 }): Promise<RoomingList[]> {
   // Current implementation: Load from local JSON
@@ -15,10 +16,11 @@ export async function fetchRoomingLists({
 
   const data = await response.json();
 
+  console.log('xxx: ', search);
   const filteredResponse = data.filter((item) => {
     // Search filter (RFP name and agreement type)
     const matchesSearch =
-      search === "" ||
+      _.isEmpty(search) ||
       item.rfpName.toLowerCase().includes(search.toLowerCase()) ||
       item.agreement_type.toLowerCase().includes(search.toLowerCase());
 

@@ -77,9 +77,11 @@ export default function Home() {
 
   const filteredData = data;
 
-  const debouncedSearch = _.debounce((s) => {
+   const debouncedSearch = useMemo(() => {
+    return _.debounce((s) => {
     setDebouncedSearchQuery(s);
   }, 300);
+  }, []);
 
   // Debounce search query
   useEffect(() => {
