@@ -35,11 +35,12 @@ export function SearchAndFilters({}: SearchAndFiltersProps) {
   const [searchQuery, setSearchQuery] = useState<string | null>("");
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const hasActiveFilters =
-    selectedStatuses.length > 0 || searchQuery?.length > 0;
+    selectedStatuses.length > 0 || !_.isEmpty(searchQuery);
 
   const query = useQueryParams();
   const search = query.get("search");
-  const status = query.get("statuses") ? query.get("statuses")?.split(",") : [];
+  const statusQueryList  = query.get("statuses");
+  const status = statusQueryList ? statusQueryList.split(",") : [];
 
   const debouncedQuery = _.debounce((key, value) => {
     const url = new URL(window.location.href);
@@ -55,7 +56,7 @@ export function SearchAndFilters({}: SearchAndFiltersProps) {
     debouncedQuery("statuses", selectedStatuses.join());
   }, [selectedStatuses]);
 
-  useEffect(() => {
+  useEffect(() => { 
     setSearchQuery(search);
     setSelectedStatuses(status);
   }, []);
@@ -91,7 +92,7 @@ export function SearchAndFilters({}: SearchAndFiltersProps) {
   return (
     <Box sx={{ mb: { xs: 2, sm: 4 } }}>
       <Grid container justifyContent="space-between">
-        <Grid item>
+        <Grid>
           <Stack direction="row" spacing={2}>
             <TextField
               fullWidth
@@ -179,13 +180,13 @@ export function SearchAndFilters({}: SearchAndFiltersProps) {
                   justifyContent="space-between"
                   sx={{ px: 2, mb: 1 }}
                 >
-                  <Grid item>
+                  <Grid>
                     <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
                       Filter by Status
                     </Typography>
                   </Grid>
                   {hasActiveFilters && (
-                    <Grid item>
+                    <Grid>
                       <Button
                         variant="text"
                         size="small"

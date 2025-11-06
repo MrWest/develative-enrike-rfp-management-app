@@ -49,6 +49,9 @@ const EVENT_COLOR_GRADIENTS = [
 ];
 
 type CollapseState = "expanded" | "collapsed" | "oneRow";
+  interface StatusStyle {
+    bgcolor: string;
+  }
 
 export default function Home() {
   // const [loading, setLoading] = useState(true);
@@ -145,8 +148,9 @@ export default function Home() {
     setCollapseStates(newStates);
   };
 
+
   const getStatusSelectedStyle = useCallback(
-    (state) =>
+    (state: CollapseState): StatusStyle | undefined =>
       Object.values(collapseStates)?.every((v) => v === state)
         ? { bgcolor: "primary.100" }
         : undefined,
@@ -186,7 +190,7 @@ export default function Home() {
             mb: { xs: 4, sm: 2 },
           }}
         >
-          <Grid item>
+          <Grid>
             <Typography
               variant="body2"
               color="text.secondary"
@@ -199,7 +203,7 @@ export default function Home() {
               Showing {filteredData.length} of {data.length} events
             </Typography>
           </Grid>
-          <Grid item>
+          <Grid>
             <ButtonGroup
               size="small"
               variant="outlined"

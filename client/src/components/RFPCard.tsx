@@ -23,7 +23,6 @@ interface RFPCardProps {
 export function RFPCard({ data }: RFPCardProps) {
   const bookingCount = data.bookings.length;
 
-  // Get date range from first and last booking
   const sortedBookings = [...data.bookings].sort(
     (a, b) =>
       new Date(a.checkInDate).getTime() - new Date(b.checkInDate).getTime(),
@@ -34,16 +33,15 @@ export function RFPCard({ data }: RFPCardProps) {
   const month = getMonthAbbreviation(data.cutOffDate);
   const day = getDayOfMonth(data.cutOffDate);
 
-  // Get event badge color based on event name
-  const getEventBadgeColor = (eventName: string) => {
-    if (eventName.toLowerCase().includes("rolling")) {
-      return "info";
-    }
-    if (eventName.toLowerCase().includes("ultra")) {
-      return "secondary";
-    }
-    return "primary";
-  };
+  // const getEventBadgeColor = (eventName: string) => {
+  //   if (eventName.toLowerCase().includes("rolling")) {
+  //     return "info";
+  //   }
+  //   if (eventName.toLowerCase().includes("ultra")) {
+  //     return "secondary";
+  //   }
+  //   return "primary";
+  // };
 
   return (
     <Card

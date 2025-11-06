@@ -29,7 +29,6 @@ export async function fetchRoomingLists({
     throw new Error(`Failed to load rooming lists: ${response.statusText}`);
   }
 
-  console.log("xxxK ", status);
   const data: RoomingListItem[] = await response.json();
 
   const filteredResponse = data.filter((item) => {
@@ -58,6 +57,6 @@ export async function fetchStatuses(): Promise<string[]> {
   }
 
   const data = await response.json();
-  const statuses = new Set<string>(data.map((item) => item.status));
+  const statuses = new Set<string>(data.map((item: RoomingListItem) => item.status));
   return Array.from(statuses).sort();
 }
