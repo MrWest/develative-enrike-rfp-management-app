@@ -26,7 +26,6 @@ import { fetchRoomingLists } from "@/lib/api";
 import _ from "lodash";
 import useQueryParams from "@/hooks/useQueryParams";
 
-// Color palette for event dividers
 const EVENT_COLORS = [
   "#2563eb", // Blue
   "#a855f7", // Purple
@@ -38,7 +37,6 @@ const EVENT_COLORS = [
   "#ec4899", // Pink
 ];
 
-// Color gradients for event dividers (transparent → color → transparent)
 const EVENT_COLOR_GRADIENTS = [
   "linear-gradient(to right, transparent, #2563eb, transparent)", // Blue
   "linear-gradient(to right, transparent, #a855f7, transparent)", // Purple
@@ -56,14 +54,15 @@ export default function Home() {
   // const [loading, setLoading] = useState(true);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
 
-  // Collapse state for each event group
   const [collapseStates, setCollapseStates] = useState<
     Record<string, CollapseState>
   >({});
 
   const query = useQueryParams();
-  const searchQuery = query.get('search');
-  const selectedStatuses = query.get('statuses') ? query.get('statuses').split() : [];
+  const searchQuery = query.get("search");
+  const selectedStatuses = query.get("statuses")
+    ? query.get("statuses").split(",")
+    : [];
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["rfp", debouncedSearchQuery, selectedStatuses],
@@ -77,18 +76,16 @@ export default function Home() {
 
   const filteredData = data;
 
-   const debouncedSearch = useMemo(() => {
+  const debouncedSearch = useMemo(() => {
     return _.debounce((s) => {
-    setDebouncedSearchQuery(s);
-  }, 300);
+      setDebouncedSearchQuery(s);
+    }, 300);
   }, []);
 
-  // Debounce search query
   useEffect(() => {
     debouncedSearch(searchQuery);
   }, [searchQuery]);
 
-  // Group filtered data by eventId
   const groupedByEvent = useMemo(() => {
     const groups = new Map<
       string,
@@ -106,7 +103,6 @@ export default function Home() {
       groups.get(key)!.items.push(item);
     });
 
-    // Convert to array and sort by event name
     return Array.from(groups.entries())
       .map(([eventId, group]) => ({
         eventId,
@@ -116,7 +112,6 @@ export default function Home() {
       .sort((a, b) => a.eventName.localeCompare(b.eventName));
   }, [filteredData]);
 
-  // Initialize collapse states for new groups
   useEffect(() => {
     const newStates: Record<string, CollapseState> = {};
     groupedByEvent.forEach((group) => {
@@ -129,7 +124,6 @@ export default function Home() {
     }
   }, [groupedByEvent, collapseStates]);
 
-  // Toggle collapse state for a specific event
   const toggleCollapseState = (eventId: string) => {
     setCollapseStates((prev) => {
       const current = prev[eventId] || "expanded";
@@ -143,7 +137,6 @@ export default function Home() {
     });
   };
 
-  // Set all groups to a specific state
   const setAllCollapseStates = (state: CollapseState) => {
     const newStates: Record<string, CollapseState> = {};
     groupedByEvent.forEach((group) => {
@@ -151,6 +144,14 @@ export default function Home() {
     });
     setCollapseStates(newStates);
   };
+
+  const getStatusSelectedStyle = useCallback(
+    (state) =>
+      Object.values(collapseStates)?.every((v) => v === state)
+        ? { bgcolor: "primary.100" }
+        : undefined,
+    [collapseStates]
+  );
 
   if (isLoading) {
     return (
@@ -172,15 +173,11 @@ export default function Home() {
       sx={{ minHeight: "100vh", bgcolor: "background.default", pt: 2, pb: 4 }}
     >
       <Container maxWidth="xl">
-        {/* Page title */}
         <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 2 }}>
           Rooming List Management: Events
         </Typography>
-
-        {/* Search and filters */}
         <SearchAndFilters />
 
-        {/* Results count and global controls */}
         <Grid
           container
           justifyContent={{ xs: "center", sm: "space-between" }}
@@ -202,7 +199,6 @@ export default function Home() {
               Showing {filteredData.length} of {data.length} events
             </Typography>
           </Grid>
-          {/* Global collapse controls */}
           <Grid item>
             <ButtonGroup
               size="small"
@@ -212,21 +208,30 @@ export default function Home() {
               <Button
                 startIcon={<UnfoldMoreIcon />}
                 onClick={() => setAllCollapseStates("expanded")}
-                sx={{ textTransform: "none" }}
+                sx={{
+                  textTransform: "none",
+                  ...getStatusSelectedStyle("expanded"),
+                }}
               >
                 Expand All
               </Button>
               <Button
                 startIcon={<ViewAgendaIcon />}
                 onClick={() => setAllCollapseStates("oneRow")}
-                sx={{ textTransform: "none" }}
+                sx={{
+                  textTransform: "none",
+                  ...getStatusSelectedStyle("oneRow"),
+                }}
               >
                 One Row
               </Button>
               <Button
                 startIcon={<UnfoldLessIcon />}
                 onClick={() => setAllCollapseStates("collapsed")}
-                sx={{ textTransform: "none" }}
+                sx={{
+                  textTransform: "none",
+                  ...getStatusSelectedStyle("collapsed"),
+                }}
               >
                 Collapse All
               </Button>
@@ -234,7 +239,6 @@ export default function Home() {
           </Grid>
         </Grid>
 
-        {/* Grouped by Event */}
         {groupedByEvent.map((group, groupIndex) => {
           const state = collapseStates[group.eventId] || "expanded";
           const color = EVENT_COLORS[groupIndex % EVENT_COLORS.length];
@@ -243,7 +247,6 @@ export default function Home() {
 
           return (
             <Box key={group.eventId} sx={{ mb: 6 }}>
-              {/* Event Divider with Name and Toggle */}
               <Box sx={{ position: "relative", mb: 4 }}>
                 <Divider
                   sx={{
@@ -301,10 +304,8 @@ export default function Home() {
                 </Box>
               </Box>
 
-              {/* Collapsed state */}
               {state === "collapsed" && null}
 
-              {/* One Row state - Horizontal scroll */}
               {state === "oneRow" && (
                 <Collapse in={true} timeout={500}>
                   <Box
@@ -313,7 +314,6 @@ export default function Home() {
                       gap: 3,
                       overflowX: "auto",
                       pb: 2,
-                      // Custom scrollbar styling
                       "&::-webkit-scrollbar": {
                         height: "12px",
                       },
@@ -331,7 +331,6 @@ export default function Home() {
                           opacity: 0.8,
                         },
                       },
-                      // Firefox scrollbar
                       scrollbarWidth: "thin",
                       scrollbarColor: `${color} rgba(0, 0, 0, 0.05)`,
                     }}
@@ -353,7 +352,6 @@ export default function Home() {
                 </Collapse>
               )}
 
-              {/* Expanded state - Grid layout */}
               {state === "expanded" && (
                 <Collapse in={true} timeout={500}>
                   <Grid
@@ -384,7 +382,6 @@ export default function Home() {
           );
         })}
 
-        {/* Empty state */}
         {filteredData.length === 0 && (
           <Box sx={{ textAlign: "center", py: 12 }}>
             <Typography color="text.secondary">

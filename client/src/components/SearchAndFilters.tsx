@@ -39,7 +39,7 @@ export function SearchAndFilters({}: SearchAndFiltersProps) {
 
   const query = useQueryParams();
   const search = query.get("search");
-  const status = query.get('statuses') ? query.get('statuses').split() : [];
+  const status = query.get('statuses') ? query.get('statuses')?.split(',') : [];
 
   const debouncedQuery = _.debounce((key, value) => {
     const url = new URL(window.location.href);
@@ -74,7 +74,6 @@ export function SearchAndFilters({}: SearchAndFiltersProps) {
     initialData: [],
   });
 
-  // Toggle status filter
   const handleStatusToggle = (status: string) => {
     setSelectedStatuses((prev) =>
       prev.includes(status)
@@ -83,7 +82,6 @@ export function SearchAndFilters({}: SearchAndFiltersProps) {
     );
   };
 
-  // Clear all filters
   const handleClearFilters = useCallback(() => {
     // setSearchQuery("");
     // setDebouncedSearchQuery("");
@@ -92,12 +90,6 @@ export function SearchAndFilters({}: SearchAndFiltersProps) {
 
   return (
     <Box sx={{ mb: { xs: 2, sm: 4 } }}>
-      {/* <Stack
-        direction={{ sm: 'row' }}
-        spacing={2}
-        alignItems={{ xs: 'stretch', sm: 'center' }}
-        justifyContent="space-between"
-      > */}
       <Grid container justifyContent="space-between">
         <Grid item>
           <Stack direction="row" spacing={2}>
