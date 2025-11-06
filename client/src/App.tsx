@@ -1,4 +1,5 @@
-import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { CssBaseline} from "@mui/material";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Route, Switch } from "wouter";
 import {
   QueryClient,
