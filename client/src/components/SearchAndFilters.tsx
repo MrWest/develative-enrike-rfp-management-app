@@ -39,7 +39,7 @@ export function SearchAndFilters({}: SearchAndFiltersProps) {
 
   const query = useQueryParams();
   const search = query.get("search");
-  const status = query.get('statuses') ? query.get('statuses')?.split(',') : [];
+  const status = query.get("statuses") ? query.get("statuses")?.split(",") : [];
 
   const debouncedQuery = _.debounce((key, value) => {
     const url = new URL(window.location.href);
@@ -78,7 +78,7 @@ export function SearchAndFilters({}: SearchAndFiltersProps) {
     setSelectedStatuses((prev) =>
       prev.includes(status)
         ? prev.filter((s) => s !== status)
-        : [...prev, status]
+        : [...prev, status],
     );
   };
 

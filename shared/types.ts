@@ -20,5 +20,5 @@ export interface RoomingList {
   bookings: Booking[];
 }
 
-export type RFPStatus = 'completed' | 'received' | 'archived' | 'Confirmed';
-export type AgreementType = 'leisure' | 'staff';
+export type RFPStatus = "completed" | "received" | "archived" | "Confirmed";
+export type AgreementType = "leisure" | "staff";

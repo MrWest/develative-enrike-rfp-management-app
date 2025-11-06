@@ -26,7 +26,7 @@ React application for managing RFP (Request for Proposal) rooming lists with adv
 
 ### Prerequisites
 
-- Node.js 18+ installed
+- Node.js 22+ installed
 - npm or pnpm package manager
 
 ### Installation
@@ -39,7 +39,8 @@ git clone https://github.com/MrWest/develative-enrike-rfp-management-app
 cd develative-enrike-rfp-management-app
 
 # Install dependencies
-npm install
+npm install | pnpm install
 
 # Start development server
-npm run dev
+npm run dev | pnpm run dev
+```

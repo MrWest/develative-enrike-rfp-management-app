@@ -26,7 +26,7 @@ export function RFPCard({ data }: RFPCardProps) {
   // Get date range from first and last booking
   const sortedBookings = [...data.bookings].sort(
     (a, b) =>
-      new Date(a.checkInDate).getTime() - new Date(b.checkInDate).getTime()
+      new Date(a.checkInDate).getTime() - new Date(b.checkInDate).getTime(),
   );
   const firstCheckIn = sortedBookings[0]?.checkInDate;
   const lastCheckOut = sortedBookings[sortedBookings.length - 1]?.checkOutDate;
@@ -65,7 +65,7 @@ export function RFPCard({ data }: RFPCardProps) {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "flex-start",
-            mb: '2px',
+            mb: "2px",
             gap: 2,
           }}
         >
@@ -78,7 +78,8 @@ export function RFPCard({ data }: RFPCardProps) {
               {data.rfpName}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Agreement: <span style={{ fontWeight: 700 }}>{data.agreement_type}</span>
+              Agreement:{" "}
+              <span style={{ fontWeight: 700 }}>{data.agreement_type}</span>
             </Typography>
           </Box>
 
@@ -158,9 +159,17 @@ export function RFPCard({ data }: RFPCardProps) {
 
         {/* Date range */}
         {firstCheckIn && lastCheckOut && (
-          <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: '2px' }}>
+          <Stack
+            direction="row"
+            spacing={1}
+            alignItems="center"
+            sx={{ mb: "2px" }}
+          >
             <CalendarMonth sx={{ fontSize: 12, color: "text.secondary" }} />
-            <Typography color="text.secondary" sx={{ fontSize: 12, color: "text.secondary" }}>
+            <Typography
+              color="text.secondary"
+              sx={{ fontSize: 12, color: "text.secondary" }}
+            >
               {formatDateRange(firstCheckIn, lastCheckOut)}
             </Typography>
           </Stack>

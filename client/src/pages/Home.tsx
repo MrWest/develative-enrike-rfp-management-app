@@ -150,7 +150,7 @@ export default function Home() {
       Object.values(collapseStates)?.every((v) => v === state)
         ? { bgcolor: "primary.100" }
         : undefined,
-    [collapseStates]
+    [collapseStates],
   );
 
   if (isLoading) {

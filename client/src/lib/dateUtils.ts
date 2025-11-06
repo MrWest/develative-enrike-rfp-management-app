@@ -5,7 +5,7 @@
  */
 export function getMonthAbbreviation(dateString: string): string {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+  return date.toLocaleDateString("en-US", { month: "short" }).toUpperCase();
 }
 
 /**
@@ -27,16 +27,16 @@ export function getDayOfMonth(dateString: string): number {
 export function formatDateRange(startDate: string, endDate: string): string {
   const start = new Date(startDate);
   const end = new Date(endDate);
-  
-  const startMonth = start.toLocaleDateString('en-US', { month: 'short' });
+
+  const startMonth = start.toLocaleDateString("en-US", { month: "short" });
   const startDay = start.getDate();
-  const endMonth = end.toLocaleDateString('en-US', { month: 'short' });
+  const endMonth = end.toLocaleDateString("en-US", { month: "short" });
   const endDay = end.getDate();
   const year = end.getFullYear();
-  
+
   if (start.getMonth() === end.getMonth()) {
     return `${startMonth} ${startDay} - ${endDay}, ${year}`;
   }
-  
+
   return `${startMonth} ${startDay} - ${endMonth} ${endDay}, ${year}`;
 }

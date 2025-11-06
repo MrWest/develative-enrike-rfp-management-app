@@ -1,14 +1,20 @@
-import { Container, Box, Typography, Button } from '@mui/material';
-import { Home } from '@mui/icons-material';
-import { useLocation } from 'wouter';
+import { Container, Box, Typography, Button } from "@mui/material";
+import { Home } from "@mui/icons-material";
+import { useLocation } from "wouter";
 
 export default function NotFound() {
   const [, setLocation] = useLocation();
 
   return (
-    <Container maxWidth="sm" sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
-      <Box sx={{ textAlign: 'center', width: '100%' }}>
-        <Typography variant="h1" sx={{ fontSize: '6rem', fontWeight: 800, color: 'primary.main' }}>
+    <Container
+      maxWidth="sm"
+      sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}
+    >
+      <Box sx={{ textAlign: "center", width: "100%" }}>
+        <Typography
+          variant="h1"
+          sx={{ fontSize: "6rem", fontWeight: 800, color: "primary.main" }}
+        >
           404
         </Typography>
         <Typography variant="h4" sx={{ fontWeight: 600, mb: 2 }}>
@@ -20,9 +26,9 @@ export default function NotFound() {
         <Button
           variant="contained"
           startIcon={<Home />}
-          onClick={() => setLocation('/')}
+          onClick={() => setLocation("/")}
           sx={{
-            textTransform: 'none',
+            textTransform: "none",
             fontWeight: 600,
             px: 4,
             py: 1.5,

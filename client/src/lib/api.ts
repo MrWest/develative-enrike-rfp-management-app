@@ -29,7 +29,7 @@ export async function fetchRoomingLists({
     throw new Error(`Failed to load rooming lists: ${response.statusText}`);
   }
 
-  console.log('xxxK ', status);
+  console.log("xxxK ", status);
   const data: RoomingListItem[] = await response.json();
 
   const filteredResponse = data.filter((item) => {
@@ -38,7 +38,11 @@ export async function fetchRoomingLists({
       item.rfpName.toLowerCase().includes(search.toLowerCase()) ||
       item.agreement_type.toLowerCase().includes(search.toLowerCase());
 
-    const matchesStatus = status.length === 0 || status.map(s => s.toLocaleLowerCase()).includes(item.status.toLocaleLowerCase());
+    const matchesStatus =
+      status.length === 0 ||
+      status
+        .map((s) => s.toLocaleLowerCase())
+        .includes(item.status.toLocaleLowerCase());
 
     return matchesSearch && matchesStatus;
   });
@@ -47,7 +51,6 @@ export async function fetchRoomingLists({
 }
 
 export async function fetchStatuses(): Promise<string[]> {
-
   const response = await fetch("/data/rfp-data.json");
 
   if (!response.ok) {
