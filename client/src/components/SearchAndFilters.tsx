@@ -38,7 +38,7 @@ export function SearchAndFilters({}: SearchAndFiltersProps) {
     selectedStatuses.length > 0 || !_.isEmpty(searchQuery);
 
   const query = useQueryParams();
-  const search = query.get("search");
+  const search = query.get("search") || "";
   const statusQueryList  = query.get("statuses");
   const status = statusQueryList ? statusQueryList.split(",") : [];
 
