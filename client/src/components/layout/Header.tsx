@@ -48,7 +48,7 @@ export function Header() {
               Events
             </Button>
             
-            <Button
+            {/* <Button
               component={Link}
               href="/about"
               startIcon={<InfoIcon />}
@@ -64,7 +64,7 @@ export function Header() {
               }}
             >
               About
-            </Button>
+            </Button> */}
           </Box>
         </Toolbar>
       </Container>

@@ -28,7 +28,7 @@ export function Layout({ children }: LayoutProps) {
         {children}
       </Box>
       
-      <Footer />
+      {/* <Footer /> */}
     </Box>
   );
 };
